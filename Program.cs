@@ -6,7 +6,6 @@ namespace PersonalFianceTracker
     {
         static void Main(string[] args)
         {
-
         }
     }
 }
