@@ -7,4 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="MKinneyPerez_ConsoleIOLib">
+      <HintPath>..\..\..\CSC160\NumberGuessingGame\MKinneyPerez_ConsoleIOLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
