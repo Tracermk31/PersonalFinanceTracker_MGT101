@@ -1,4 +1,6 @@
-﻿namespace PersonalFianceTracker
+﻿using CSC160_ConsoleMenu;
+
+namespace PersonalFianceTracker
 {
     internal class Program
     {
