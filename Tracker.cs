@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.Marshalling;
-using System.Text;
-using CSC160_ConsoleMenu;
+﻿using CSC160_ConsoleMenu;
 
 namespace PersonalFianceTracker
 {
@@ -12,6 +8,12 @@ namespace PersonalFianceTracker
         {
             { "Veronica", "12Hi" }
         };
+
+        private List<string> mainMenu = 
+        [
+            "Create Account",
+            "Login"
+        ];
 
         private void CreateAccount()
         {
@@ -62,37 +64,62 @@ namespace PersonalFianceTracker
             string userAccount;
             string userPassword;
 
-            bool tryAgain = true;
+            byte attemptsRemaining = 3;
+
+            bool tryAgain = false;
             do
             {
                 userAccount = CIO.PromptForInput("What is your username?", false);
                 if (!accounts.ContainsKey(userAccount)) {
                     Console.WriteLine("This account doesn't exist!");
                     tryAgain = CIO.PromptForBool("Would you like to try again?", "Yes", "No");
+                    if (!tryAgain)
+                    {
+                        return false;
+                    }
                 } 
-            } while (tryAgain);
+            } while (!accounts.ContainsKey(userAccount));
 
-          
-            return false;
+            do
+            {
+                userPassword = CIO.PromptForInput("What is your password?", false);
+                if (accounts[userAccount] != userPassword)
+                {
+                    Console.WriteLine($"Wrong password you have {--attemptsRemaining} attempts left");
+                    tryAgain = CIO.PromptForBool("Would you like to try again?", "Yes", "No");
+                    if (!tryAgain || attemptsRemaining == 0)
+                    {
+                        return false;
+                    }
+                }
+            } while (accounts[userAccount] != userPassword);
+
+            return true;
         }
 
-        internal void MainMenu(IEnumerable<string> options)
+        internal void MainMenu()
         {
-            byte choice = (byte)CIO.PromptForMenuSelection(options);
-            switch (choice)
+            bool running = true;
+            do
             {
-                case 1:
-                    CreateAccount();
-                    break;
-                case 2:
-                    if (LoginAccount())
-                    {
-                        //Internal Menu
-                    }
-                    break;
-                default:
-                    return;
-            }
+                byte choice = (byte)CIO.PromptForMenuSelection(mainMenu);
+                switch (choice)
+                {
+                    case 1:
+                        CreateAccount();
+                        break;
+                    case 2:
+                        if (LoginAccount())
+                        {
+                            Console.WriteLine("Succesful Login!");
+                            //Internal Menu
+                        }
+                        break;
+                    default:
+                        running = false;
+                        break;
+                }
+            } while (running);
         }
     }
 }

@@ -6,6 +6,7 @@ namespace PersonalFianceTracker
     {
         static void Main(string[] args)
         {
+            new Tracker().MainMenu();
         }
     }
 }
