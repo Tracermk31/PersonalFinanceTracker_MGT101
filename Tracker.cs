@@ -8,17 +8,16 @@ namespace PersonalFianceTracker
 {
     internal class Tracker
     {
-        public Dictionary<string, string> passwords = new Dictionary<string, string>()
+        public static Dictionary<string, string> accounts = new Dictionary<string, string>()
         {
             { "Veronica", "12Hi" }
         };
-        public void CreateAccout()
+        public static void CreateAccount()
         {
-            string promptForAccount = "What would you like your account name to be?: ";
-            string promptForPassword = "What would you like your password to be?: ";
+            string promptForAccount = "What would you like your account name to be? ";
+            string promptForPassword = "What would you like your password to be? ";
             bool isInvalid = true;
 
-            string userPassword = CIO.PromptForInput(promptForPassword, false);
 
             string userAccount = CIO.PromptForInput(promptForAccount, false);
             do
@@ -34,6 +33,8 @@ namespace PersonalFianceTracker
                 }
             } while (isInvalid);
 
+            string userPassword = CIO.PromptForInput(promptForPassword, false);
+
             isInvalid = true;
             do
             {
@@ -48,7 +49,10 @@ namespace PersonalFianceTracker
                 }
             } while (isInvalid);
 
-            passwords.Add(userAccount, userPassword);
+            accounts.Add(userAccount, userPassword);
+
+            // For testing
+            // Console.WriteLine($"Your password is: {accounts[userAccount]}");
         }
     }
 }
