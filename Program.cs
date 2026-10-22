@@ -6,7 +6,11 @@ namespace PersonalFianceTracker
     {
         static void Main(string[] args)
         {
+<<<<<<< Updated upstream
             new Tracker().MainMenu();
+=======
+            Console.WriteLine("Hello, World!");
+>>>>>>> Stashed changes
         }
     }
 }
