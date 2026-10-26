@@ -1,9 +1,22 @@
 ﻿using CSC160_ConsoleMenu;
+using System.Text.Json;
 
 namespace PersonalFianceTracker
 {
+    internal class AccountInfo
+    {
+        public string Username {  get; set; }
+        public double Balance { get; set; }
+
+        public AccountInfo(string username, double balance)
+        {
+            Username = username;
+            Balance = balance;
+        }
+    }
     internal class Tracker
     {
+
         private Dictionary<string, string> accounts = new Dictionary<string, string>()
         {
             { "Veronica", "12Hi" }
@@ -19,39 +32,23 @@ namespace PersonalFianceTracker
         {
             string promptForAccount = "What would you like your account name to be? ";
             string promptForPassword = "What would you like your password to be? ";
-
-            bool isInvalid = true;
+            string promptForBalance = "How much is your starting balance?";
 
             string userAccount;
             string userPassword;
+            double balance = 0.0;
 
-            do
-            {
-                userAccount = CIO.PromptForInput(promptForAccount, false);
-                if (string.IsNullOrEmpty(userAccount))
-                {
-                    Console.WriteLine("userAccount cannot be null or empty, please try again");
-                }
-                else
-                {
-                    isInvalid = false;
-                }
-            } while (isInvalid);
+            userAccount = CIO.PromptForInput(promptForAccount, false);
+            userPassword = CIO.PromptForInput(promptForPassword, false);
+            balance = (double)CIO.PromptForInt(promptForBalance, 0, 1000000);
 
-            isInvalid = true;
+            AccountInfo accountInfo = new(userAccount, balance);
 
-            do
-            {
-                userPassword = CIO.PromptForInput(promptForPassword, false);
-                if (string.IsNullOrEmpty(userPassword))
-                {
-                    Console.WriteLine("userPassword cannot be null or empty, please try again");
-                }
-                else
-                {
-                    isInvalid = false;
-                }
-            } while (isInvalid);
+            string fileName = "AccountInfo.json";
+            string jsonString = JsonSerializer.Serialize(accountInfo);
+            Console.WriteLine(jsonString);
+
+            File.WriteAllText(fileName, jsonString);
 
             accounts.Add(userAccount, userPassword);
 
