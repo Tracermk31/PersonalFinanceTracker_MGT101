@@ -9,6 +9,7 @@ namespace PersonalFianceTracker
             { "Veronica", "12Hi" }
         };
 
+        private List<(string goal, string longOrShort)> goalList = new List<(string goal, string longOrShort)>();
         private List<string> mainMenu = 
         [
             "Create Account",
@@ -121,5 +122,45 @@ namespace PersonalFianceTracker
                 }
             } while (running);
         }
+
+        internal void SetGoal()
+        {
+            string userTerm = "";
+            string userGoal = "";
+            string prompt;
+            prompt = "What goal for yourself would you like to add? Enter 0 if you'd like to go back: ";
+
+            userGoal = CIO.PromptForInput(prompt, false);
+
+            if (!string.Equals(userGoal, "0"))
+            {
+                prompt = "Is your goal a long or short term goal? Please enter 1 for long term and 2 for short term: ";
+
+                int userTermInt = CIO.PromptForInt(prompt, 1, 2);
+
+                if (userTermInt == 1)
+                {
+                    userTerm = "Long Term";
+                }
+                else if (userTermInt == 2)
+                {
+                    userTerm = "Short Term";
+                }
+
+                goalList.Add((userGoal, userTerm));
+
+                //Code for manual testing
+                //foreach(var (goal, term) in goalList)
+                //{
+                //    Console.WriteLine($"Goal: {goal}\nTerm: {term}");
+                //}
+            }
+            else
+            {
+                Console.WriteLine("Returning to menu...");
+            }
+
+        }
     }
+
 }
