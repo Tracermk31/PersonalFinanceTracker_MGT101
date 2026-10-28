@@ -1,7 +1,7 @@
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using CSC160_ConsoleMenu;
 
 namespace PersonalFianceTracker
@@ -10,12 +10,15 @@ namespace PersonalFianceTracker
     {
         public decimal Balance { get; private set; }
 
+        private readonly TransactionStorage transactionStorage;
+
         private readonly List<string> mainMenu = new List<string>
         {
             "View Balance",
             "Add Money (Income)",
             "Subtract Money (Expense)"
         };
+
         public MoneyManager(decimal startingBalance = 0m)
         {
             if (startingBalance < 0m)
@@ -24,39 +27,79 @@ namespace PersonalFianceTracker
                     nameof(startingBalance),
                     "Starting balance cannot be negative.");
             }
-            //Technically not needed, but is good practice to include anyways.
+
+            transactionStorage = new TransactionStorage();
 
             Balance = startingBalance;
+
+            // Rebuild the balance from saved transactions.
+            foreach (Transaction transaction in
+                transactionStorage.GetTransactions())
+            {
+                if (transaction.Type == TransactionType.Income)
+                {
+                    Balance += transaction.Amount;
+                }
+                else if (transaction.Type == TransactionType.Expense)
+                {
+                    Balance -= transaction.Amount;
+                }
+            }
         }
 
-        public bool AddMoney(decimal amount)
+        public IReadOnlyList<Transaction> GetTransactions()
+        {
+            return transactionStorage.GetTransactions();
+        }
+
+        public bool AddMoney(decimal amount, string description = "Income")
         {
             if (amount <= 0m)
             {
                 return false;
             }
 
+            Transaction transaction = new Transaction
+            {
+                Type = TransactionType.Income,
+                Amount = amount,
+                Description = description
+            };
+
+            transactionStorage.AddTransaction(transaction);
+
             Balance += amount;
+
             return true;
         }
 
-        public bool SubtractMoney(decimal amount)
+        public bool SubtractMoney(decimal amount, string description = "Expense")
         {
             if (amount <= 0m || amount > Balance)
             {
                 return false;
             }
 
+            Transaction transaction = new Transaction
+            {
+                Type = TransactionType.Expense,
+                Amount = amount,
+                Description = description
+            };
+
+            transactionStorage.AddTransaction(transaction);
+
             Balance -= amount;
+
             return true;
         }
-        //These return a bool for checking, as opposed to not returning anything
 
         private void ViewBalance()
         {
             Console.WriteLine(
                 $"Your current balance is {Balance:C}.");
         }
+
         private decimal PromptForAmount()
         {
             while (true)
@@ -77,41 +120,79 @@ namespace PersonalFianceTracker
                     "Please enter a valid amount greater than zero.");
             }
         }
+
         private void AddMoneyMenu()
         {
             Console.WriteLine("--- Add Money ---");
 
             decimal amount = PromptForAmount();
 
-            if (AddMoney(amount))
+            string description = CIO.PromptForInput(
+                "Enter a reason for adding money: ", false);
+
+            try
+            {
+                if (AddMoney(amount, description))
+                {
+                    Console.WriteLine(
+                        $"Added {amount:C} to your balance.");
+
+                    ViewBalance();
+                }
+            }
+            catch (Exception ex) when (
+                ex is IOException ||
+                ex is UnauthorizedAccessException)
             {
                 Console.WriteLine(
-                    $"Added {amount:C} to your balance.");
-
-                ViewBalance();
+                    $"Could not save transaction: {ex.Message}");
             }
         }
+
         private void SubtractMoneyMenu()
         {
             Console.WriteLine("--- Subtract Money ---");
 
             decimal amount = PromptForAmount();
 
-            if (SubtractMoney(amount))
-            {
-                Console.WriteLine(
-                    $"Subtracted {amount:C} from your balance.");
-
-                ViewBalance();
-            }
-            else
+            if (amount > Balance)
             {
                 Console.WriteLine(
                     "Insufficient funds. Balance was not changed.");
 
                 ViewBalance();
+                return;
+            }
+
+            string description = CIO.PromptForInput(
+                "Enter a reason for spending money: ", false);
+
+            try
+            {
+                if (SubtractMoney(amount, description))
+                {
+                    Console.WriteLine(
+                        $"Subtracted {amount:C} from your balance.");
+
+                    ViewBalance();
+                }
+                else
+                {
+                    Console.WriteLine(
+                        "Balance was not changed.");
+
+                    ViewBalance();
+                }
+            }
+            catch (Exception ex) when (
+                ex is IOException ||
+                ex is UnauthorizedAccessException)
+            {
+                Console.WriteLine(
+                    $"Could not save transaction: {ex.Message}");
             }
         }
+
         internal void MainMenu()
         {
             bool running = true;
