@@ -8,6 +8,7 @@ namespace PersonalFianceTracker
         {
             new Tracker().MainMenu();
             new MoneyManager().MainMenu();
+            Tracker trackerRemote = new Tracker();
         }
     }
 }
