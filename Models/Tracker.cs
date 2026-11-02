@@ -44,9 +44,8 @@ namespace PersonalFianceTracker
 
             AccountInfo accountInfo = new(userAccount, balance);
 
-            string fileName = "AccountInfo.json";
+            string fileName = "Assets/AccountInfo.json";
             string jsonString = JsonSerializer.Serialize(accountInfo);
-            Console.WriteLine(jsonString);
 
             File.WriteAllText(fileName, jsonString);
 

@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Assets\**" />
+    <EmbeddedResource Remove="Assets\**" />
+    <None Remove="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="MKinneyPerez_ConsoleIOLib">
       <HintPath>..\..\..\CSC160\NumberGuessingGame\MKinneyPerez_ConsoleIOLib.dll</HintPath>
     </Reference>
