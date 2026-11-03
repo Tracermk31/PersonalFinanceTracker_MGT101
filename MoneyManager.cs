@@ -11,12 +11,15 @@ namespace PersonalFianceTracker
         public decimal Balance { get; private set; }
 
         private readonly TransactionStorage transactionStorage;
+        private readonly GoalStorage goalStorage;
 
         private readonly List<string> mainMenu = new List<string>
         {
             "View Balance",
             "Add Money (Income)",
-            "Subtract Money (Expense)"
+            "Subtract Money (Expense)",
+            "Set Goal",
+            "View Goals"
         };
 
         public MoneyManager(decimal startingBalance = 0m)
@@ -29,6 +32,7 @@ namespace PersonalFianceTracker
             }
 
             transactionStorage = new TransactionStorage();
+            goalStorage = new GoalStorage();
 
             Balance = startingBalance;
 
@@ -193,6 +197,74 @@ namespace PersonalFianceTracker
             }
         }
 
+        private void SetGoal()
+        {
+            string userGoal = CIO.PromptForInput(
+                "What goal would you like to add? Enter 0 to go back: ",
+                false);
+
+            if (userGoal == "0")
+            {
+                Console.WriteLine("Returning to menu...");
+                return;
+            }
+
+            int userTermInt = CIO.PromptForInt(
+                "Enter 1 for long term and 2 for short term: ",
+                1, 2);
+
+            string userTerm = "";
+
+            if (userTermInt == 1)
+            {
+                userTerm = "Long Term";
+            }
+            else if (userTermInt == 2)
+            {
+                userTerm = "Short Term";
+            }
+
+            Goal newGoal = new Goal
+            {
+                Name = userGoal,
+                Term = userTerm
+            };
+
+            try
+            {
+                goalStorage.AddGoal(newGoal);
+                Console.WriteLine("Goal saved successfully!");
+            }
+            catch (Exception ex) when (
+                ex is IOException ||
+                ex is UnauthorizedAccessException)
+            {
+                Console.WriteLine(
+                    $"Could not save goal: {ex.Message}");
+            }
+        }
+
+        private void ViewGoals()
+        {
+            var goals = goalStorage.GetGoals();
+
+            Console.WriteLine();
+            Console.WriteLine("=== Your Goals ===");
+
+            if (goals.Count == 0)
+            {
+                Console.WriteLine("You have no goals saved.");
+                return;
+            }
+
+            for (int i = 0; i < goals.Count; i++)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"{i + 1}. {goals[i].Name}");
+                Console.WriteLine($"   Term: {goals[i].Term}");
+            }
+        }
+
         internal void MainMenu()
         {
             bool running = true;
@@ -221,6 +293,14 @@ namespace PersonalFianceTracker
 
                     case 3:
                         SubtractMoneyMenu();
+                        break;
+
+                    case 4:
+                        SetGoal();
+                        break;
+
+                    case 5:
+                        ViewGoals();
                         break;
 
                     default:

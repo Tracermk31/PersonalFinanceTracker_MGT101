@@ -9,11 +9,11 @@ namespace PersonalFianceTracker
             { "Veronica", "12Hi" }
         };
 
-        private List<(string goal, string longOrShort)> goalList = new List<(string goal, string longOrShort)>();
+        private readonly GoalStorage goalStorage = new GoalStorage();
         private List<string> mainMenu = 
         [
             "Create Account",
-            "Login"
+            "Login",
         ];
 
         private void CreateAccount()
@@ -125,42 +125,50 @@ namespace PersonalFianceTracker
 
         internal void SetGoal()
         {
-            string userTerm = "";
-            string userGoal = "";
-            string prompt;
-            prompt = "What goal for yourself would you like to add? Enter 0 if you'd like to go back: ";
+            string prompt =
+                "What goal for yourself would you like to add? Enter 0 to go back: ";
 
-            userGoal = CIO.PromptForInput(prompt, false);
+            string userGoal = CIO.PromptForInput(prompt, false);
 
-            if (!string.Equals(userGoal, "0"))
-            {
-                prompt = "Is your goal a long or short term goal? Please enter 1 for long term and 2 for short term: ";
-
-                int userTermInt = CIO.PromptForInt(prompt, 1, 2);
-
-                if (userTermInt == 1)
-                {
-                    userTerm = "Long Term";
-                }
-                else if (userTermInt == 2)
-                {
-                    userTerm = "Short Term";
-                }
-
-                goalList.Add((userGoal, userTerm));
-
-                //Code for manual testing
-                //foreach(var (goal, term) in goalList)
-                //{
-                //    Console.WriteLine($"Goal: {goal}\nTerm: {term}");
-                //}
-            }
-            else
+            if (userGoal == "0")
             {
                 Console.WriteLine("Returning to menu...");
+                return;
             }
 
+            prompt = "Enter 1 for long term and 2 for short term: ";
+
+            int userTermInt = CIO.PromptForInt(prompt, 1, 2);
+
+            string userTerm = "";
+
+            if (userTermInt == 1)
+            {
+                userTerm = "Long Term";
+            }
+            else if (userTermInt == 2)
+            {
+                userTerm = "Short Term";
+            }
+
+            Goal newGoal = new Goal
+            {
+                Name = userGoal,
+                Term = userTerm
+            };
+
+            try
+            {
+                goalStorage.AddGoal(newGoal);
+                Console.WriteLine("Goal saved successfully!");
+            }
+            catch (Exception ex) when (
+                ex is IOException ||
+                ex is UnauthorizedAccessException)
+            {
+                Console.WriteLine(
+                    $"Could not save goal: {ex.Message}");
+            }
         }
     }
-
 }
