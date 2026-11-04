@@ -3,6 +3,7 @@ using System.Text.Json;
 
 namespace PersonalFianceTracker
 {
+
     internal class AccountInfo
     {
         public string Username {  get; set; }
@@ -16,7 +17,7 @@ namespace PersonalFianceTracker
     }
     internal class Tracker
     {
-
+        private MoneyManager m = new MoneyManager();
         private Dictionary<string, string> accounts = new Dictionary<string, string>()
         {
             { "Veronica", "12Hi" }
@@ -109,7 +110,7 @@ namespace PersonalFianceTracker
                         if (LoginAccount())
                         {
                             Console.WriteLine("Succesful Login!");
-                            //Internal Menu
+                            m.MainMenu();
                         }
                         break;
                     default:
