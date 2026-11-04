@@ -96,12 +96,15 @@ namespace PersonalFianceTracker
 
         private void ViewBalance()
         {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(
                 $"Your current balance is {Balance:C}.");
+            Console.ResetColor();
         }
 
         private decimal PromptForAmount()
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             while (true)
             {
                 string input = CIO.PromptForInput(
@@ -115,14 +118,16 @@ namespace PersonalFianceTracker
                 {
                     return amount;
                 }
-
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(
                     "Please enter a valid amount greater than zero.");
+                Console.ForegroundColor = ConsoleColor.Green;
             }
         }
 
         private void AddMoneyMenu()
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("--- Add Money ---");
 
             decimal amount = PromptForAmount();
@@ -144,22 +149,26 @@ namespace PersonalFianceTracker
                 ex is IOException ||
                 ex is UnauthorizedAccessException)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(
                     $"Could not save transaction: {ex.Message}");
+                Console.ResetColor();
             }
         }
 
         private void SubtractMoneyMenu()
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("--- Subtract Money ---");
 
             decimal amount = PromptForAmount();
 
             if (amount > Balance)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(
                     "Insufficient funds. Balance was not changed.");
-
+                Console.ResetColor();
                 ViewBalance();
                 return;
             }
@@ -201,11 +210,14 @@ namespace PersonalFianceTracker
             {
                 Console.WriteLine();
 
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(
                     "=== Personal Finance Tracker ===");
 
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.WriteLine(
                     $"Current balance: {Balance:C}");
+                Console.ForegroundColor = ConsoleColor.Green;
 
                 int choice = CIO.PromptForMenuSelection(mainMenu);
 

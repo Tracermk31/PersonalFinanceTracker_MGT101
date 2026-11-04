@@ -100,6 +100,7 @@ namespace PersonalFianceTracker
 
         internal void MainMenu()
         {
+            Console.ForegroundColor = ConsoleColor.Blue;
             bool running = true;
             do
             {
